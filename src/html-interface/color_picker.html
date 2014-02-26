@@ -1,0 +1,183 @@
+<em><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=400, user-scalable = no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>LED</title>
+  <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="touch-icon-ipad.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-retina.png">
+  <link rel="SHORTCUT ICON" href="favicon.ico" >
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script src="jquery.ui.touch-punch.min.js"></script>
+  <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha3.js"></script>
+  <style>
+  #red, #green, #blue {
+    
+    width: 300px;
+    margin: 15px auto;
+  }
+  #swatch {
+    width: 120px;
+    height: 100px;
+    margin:15px auto;
+    background-image: none;
+  }
+  #red .ui-slider-range { background: #ef2929; }
+  #red .ui-slider-handle { border-color: #ef2929; }
+  #green .ui-slider-range { background: #8ae234; }
+  #green .ui-slider-handle { border-color: #8ae234; }
+  #blue .ui-slider-range { background: #729fcf; }
+  #blue .ui-slider-handle { border-color: #729fcf; }
+  </style>
+  <script>
+  function hexFromRGB(r, g, b) {
+    var hex = [
+      r.toString( 16 ),
+      g.toString( 16 ),
+      b.toString( 16 )
+    ];
+    $.each( hex, function( nr, val ) {
+      if ( val.length === 1 ) {
+        hex[ nr ] = "0" + val;
+      }
+    });
+    return hex.join( "" ).toUpperCase();
+  }
+  function refreshSwatch() {
+    var red = $( "#red" ).slider( "value" ),
+      green = $( "#green" ).slider( "value" ),
+      blue = $( "#blue" ).slider( "value" ),
+      hex = hexFromRGB( red, green, blue );
+    $( "#swatch" ).css( "background-color", "#" + hex );
+	$("#redVal").html($( "#red" ).slider( "value"));
+	$("#greenVal").html($( "#green" ).slider( "value"));
+	$("#blueVal").html($( "#blue" ).slider( "value"));
+  }
+  function alertSHA3(){
+  	alert(CryptoJS.SHA3("1243"));
+  }
+  function changeLights(command,hexSent){
+	  if(CryptoJS.SHA3($('#light_color').val())=="cf9e9caec04f1c13a9d1b535c9e3f0059893d1dec32aa72bdaf6eed1cef048863177cef556c1a5ac906775bb6a9e0157134981c238082bef4eed3f74815865f5"){
+	      var red = $( "#red" ).slider( "value" ), green = $( "#green" ).slider( "value" ),blue = $( "#blue" ).slider( "value" ),hex = hexFromRGB( red, green, blue );
+		  var string_to_send = command+hex;
+		  if(hexSent!=""){
+			  string_to_send = command+hexSent;
+		  }
+		  
+		  if(command=="au"){
+			  string_to_send = "auto";
+		  }
+		  
+		  
+  	    var postData=JSON.stringify({"title":string_to_send});
+  		$.post("Your Python Webserver",
+  		postData,
+    function(data, textStatus, jqXHR)
+    {
+        //data - JSON object from server.
+    },"json").fail(function(jqXHR, textStatus, errorThrown) 
+        {
+ 
+        });
+			
+		
+	  }
+	  else{
+		  alert("Wrong Passcode");
+	  }
+  }
+  $(function() {
+    $( "#red, #green, #blue" ).slider({
+      orientation: "horizontal",
+      range: "min",
+      max: 255,
+      value: 127,
+      slide: refreshSwatch,
+      change: refreshSwatch
+    });
+    $( "#red" ).slider( "value", 255 );
+	$("#red").draggable();
+    $( "#green" ).slider( "value", 140 );
+	$("#green").draggable();
+    $( "#blue" ).slider( "value", 60 );
+	$("#blue").draggable();
+	$( "#tabs").tabs();
+	// fix the classes
+	    $( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
+	      .removeClass( "ui-corner-all ui-corner-top" )
+	      .addClass( "ui-corner-bottom" );
+	$(".tabs-bottom .ui-tabs-nav").appendTo(".tabs-bottom");
+	$( "input[type=submit], a, button" )
+	      .button()
+	      .click(function( event ) {
+	        event.preventDefault();
+	      });
+		  $('input').addClass("ui-corner-all");
+  });
+  </script>
+  <style>
+    /* force a height so the tabs don't jump as content height changes */
+    #tabs .tabs-spacer { float: left; height: 200px; }
+    .tabs-bottom .ui-tabs-nav { clear: left; padding: 0 .2em .2em .2em; width: 400px;
+margin: 0 auto; }
+    .tabs-bottom .ui-tabs-nav li { top: auto; bottom: 0; margin: 0 .2em 1px 0; border-bottom: auto; border-top: 0;text-align:center;  width:180px}
+    .tabs-bottom .ui-tabs-nav li.ui-tabs-active { margin-left:15px;margin-top: -1px; padding-top: 1px; width:180px;text-align:center;}
+	.ui-button-text {width: 140 px;}
+    </style>
+</head>
+<body style="border:none;text-align:center;">
+<div id="tabs" class="tabs-bottom" style="border:none;padding:none">
+	<ul>
+		<li><a href="#tab-1"><span class="ui-button-text" style="width: 70px;">RGB</span></a></li>
+		<li><a href="#tab-2"><span class="ui-button-text" style="width: 70px;">Commands</span></a></li>
+	</ul>
+	<div class="tabs-spacer"></div>
+		
+	<div id="tab-1" style="height: 410px">	
+		<div id="swatch" class="ui-widget-content ui-corner-all"></div>
+
+			<br/>
+ 
+		<div id="red"></div>
+		<div id="redVal"></div>
+		<div id="green"></div>
+		<div id="greenVal"></div>
+		<div id="blue"></div>
+		<div id="blueVal"></div>
+		<button onclick="changeLights('rc','')" style="margin-top: 15px; margin-right: 0 px;">Set Solid</button>
+		<button onclick="changeLights('ra','')" style="margin-top: 15px; margin-right: 0 px;">Set Fade</button>
+	</div>
+	<div id="tab-2" style="height: 410px">
+		<button onclick="changeLights('au','FFE9C8')" style="margin-top: 15px; margin-right: 0 px;">Set Auto</button>
+		<br/>
+		<button onclick="changeLights('rc','FFE9C8')" style="margin-top: 15px; margin-right: 0 px;">Set Daytime</button>
+		<br/>
+		<button onclick="changeLights('rc','FF7800')" style="margin-top: 15px; margin-right: 0 px;">Set Nightime</button>
+		<br/>
+		<button onclick="changeLights('rc','000000')" style="margin-top: 15px; margin-right: 0 px;">Set Off</button>
+		<br/>
+		<button onclick="changeLights('rb','FF7800')" style="margin-top: 15px; margin-right: 0 px;">Set Rainbow</button>
+	</div>
+</div>
+		<label style="font-style:normal;font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;">Auth Key:</label>
+		<form method="post">
+		<input type ="password" id='light_color'name="auth" id="auth">
+		</form>
+		<br/>
+		
+		
+<div class='response' id="r_section"></div>
+
+
+ 
+
+ 
+ 
+</body>
+</html></em>
