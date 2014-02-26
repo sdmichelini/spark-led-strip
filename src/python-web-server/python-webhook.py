@@ -30,11 +30,21 @@ import logging
 import json
 import urllib
 import urllib2
+import datetime
+
+def inRange(val,low,high):
+	return ((val<=high)and(low<=val))
 
 class MainPage(webapp2.RequestHandler):
+	
+
 	def post(self):
 		data=json.loads(self.request.body)
 		data['title']=data['title'].lower()
+		if(data['title']=='auto'):
+			now = datetime.datetime.now()
+			if(inRange(now.hour-5,17,24) or inRange(now.hour-5,0,7)):
+				data['title']='autos'
 		#replace {ACCESS_TOKEN} and {DEVICE_ID}/{FUNCTION} with their proper values from your core
 		postParameters = {'access_token' : {ACCESS_TOKEN}, 'command' :data['title']}
 		url='https://api.spark.io/v1/devices/{DEVICE_ID}/{FUNCTION}'
